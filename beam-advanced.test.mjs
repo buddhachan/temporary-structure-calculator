@@ -5,7 +5,7 @@ const base={L:6,E:205000,I:80000000};
 let r=solve({...base,pointLoads:[{P:20,a:3}]});eq(r.RA,10);eq(r.RB,10);eq(r.maxMoment,30);eq(r.maxDeflection,20000*6000**3/(48*205000*80000000),.0001);
 r=solve({...base,patchLoads:[{w:4,a:0,b:6}]});eq(r.RA,12);eq(r.RB,12);eq(r.maxMoment,18);eq(r.maxDeflection,5*4*6000**4/(384*205000*80000000),.0001);
 r=solve({...base,patchLoads:[{w:4,a:2,b:4}]});eq(r.RA,4);eq(r.RB,4);eq(r.totalLoad,8);eq(r.points.find(p=>p.x===3).M,10);
-r=solve({...base,moments:[{M:12,a:3}]});eq(r.RA,-2);eq(r.RB,2);eq(r.jumps[0].momentJump,12);eq(r.jumps[0].right.M-r.jumps[0].left.M,0);eq(r.points[0].y,0);eq(r.points.at(-1).y,0);
+r=solve({...base,moments:[{M:12,a:3}]});eq(r.RA,-2);eq(r.RB,2);eq(r.jumps[0].momentJump,12);eq(r.jumps[0].right.M-r.jumps[0].left.M,12);eq(r.points[0].y,0);eq(r.points.at(-1).y,0);
 r=solve({...base,pointLoads:[{P:10,a:2},{P:10,a:4}]});eq(r.RA,10);eq(r.RB,10);eq(r.maxMoment,20);
 assert.throws(()=>solve({...base,patchLoads:[{w:4,a:5,b:2}]}));
 console.log('Advanced beam analytical reference tests passed');
