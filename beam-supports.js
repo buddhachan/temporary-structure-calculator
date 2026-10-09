@@ -21,5 +21,18 @@ export function solveSupportedBeam({L,E=205000,I=80000000,pointLoads=[],patchLoa
  const reactions=fixed.map(i=>({dof:i,value:K[i].reduce((s,k,j)=>s+k*u[j],0)-F[i]}));
  const points=nodes.map((x,i)=>({x,y:-1000*u[2*i],theta:-u[2*i+1]}));
  const maxDeflection=Math.max(...points.map(p=>Math.abs(p.y)));
- return {support,points,reactions,RA:reactions.find(r=>r.dof===0)?.value??0,RB:reactions.find(r=>r.dof===dof-2)?.value??0,maxDeflection};
+ const RA=reactions.find(r=>r.dof===0)?.value??0,RB=reactions.find(r=>r.dof===dof-2)?.value??0;
+ const leftMoment=reactions.find(r=>r.dof===1)?.value??0,rightMoment=reactions.find(r=>r.dof===dof-1)?.value??0;
+ const pos=x=>Math.max(0,x);
+ const evaluate=(x,side='right')=>{
+  const active=a=>side==='right'?x>=a:x>a;
+  const V=RA-pointLoads.reduce((v,q)=>v+(active(q.a)?-q.P:0),0)-patchLoads.reduce((v,q)=>v+q.w*(pos(x-q.a)-pos(x-q.b)),0);
+  const M=-leftMoment+RA*x-pointLoads.reduce((v,q)=>v+q.P*pos(x-q.a),0)-patchLoads.reduce((v,q)=>v+q.w*(pos(x-q.a)**2-pos(x-q.b)**2)/2,0)+moments.reduce((v,q)=>v+(active(q.a)?q.M:0),0);
+  return {x,V,M};
+ };
+ const diagrams=nodes.map(x=>evaluate(x));
+ const jumps=[...new Set([...pointLoads.map(q=>q.a),...moments.map(q=>q.a)])].sort((a,b)=>a-b).map(x=>({x,left:evaluate(x,'left'),right:evaluate(x,'right')}));
+ const extrema=[...diagrams,...jumps.flatMap(j=>[j.left,j.right])];
+ const maxShear=Math.max(...extrema.map(p=>Math.abs(p.V))),maxMoment=Math.max(...extrema.map(p=>Math.abs(p.M)));
+ return {support,points,diagrams,jumps,reactions,RA,RB,leftMoment,rightMoment,maxDeflection,maxShear,maxMoment};
 }
