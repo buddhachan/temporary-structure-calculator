@@ -1,0 +1,12 @@
+import {solveBeam} from './beam.js';
+import assert from 'node:assert/strict';
+const close=(a,b,t=1e-6)=>assert.ok(Math.abs(a-b)<=t,`expected ${a} ≈ ${b}`);
+const base={L:6,E:205000,I:80000000};
+let r=solveBeam({...base,loads:[{P:20,a:3}]});
+close(r.RA,10);close(r.RB,10);close(r.maxMoment,30);close(r.maxShear,10);
+close(r.maxDeflection,20000*6000**3/(48*205000*80000000),1e-5);
+r=solveBeam({...base,w:4});close(r.RA,12);close(r.RB,12);close(r.maxMoment,18);
+close(r.maxDeflection,5*4*6000**4/(384*205000*80000000),1e-5);
+r=solveBeam({...base,loads:[{P:10,a:2},{P:10,a:4}]});close(r.RA,10);close(r.RB,10);close(r.maxMoment,20);
+r=solveBeam({...base,loads:[{P:20,a:0}]});close(r.RA,20);close(r.RB,0);close(r.maxMoment,0);close(r.maxDeflection,0);
+console.log('Beam solver checks passed');
