@@ -13,7 +13,7 @@ r=solve({...base,support:'fixed-fixed',pointLoads:[{P,a:3}]});
 near(r.RA,10);near(r.RB,10);near(Math.abs(r.leftMoment),15);near(Math.abs(r.rightMoment),15);
 near(r.maxDeflection,20000*6000**3/(192*EI),.02);
 r=solve({...base,support:'fixed-pinned',pointLoads:[{P,a:3}]});
-near(r.RA+r.RB,20);near(r.RB,6.875,.05);near(Math.abs(r.leftMoment),18.75,.05);
+near(r.RA+r.RB,20);near(r.RB,6.25,.05);near(Math.abs(r.leftMoment),22.5,.05);
 r=solve({...base,support:'simple',patchLoads:[{w:4,a:0,b:6}]});
 near(r.RA,12);near(r.RB,12);near(r.maxMoment,18,.05);
 near(r.maxDeflection,5*4*6000**4/(384*EI),.02);
