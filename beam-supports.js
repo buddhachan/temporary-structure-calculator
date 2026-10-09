@@ -26,7 +26,7 @@ export function solveSupportedBeam({L,E=205000,I=80000000,pointLoads=[],patchLoa
  const pos=x=>Math.max(0,x);
  const evaluate=(x,side='right')=>{
   const active=a=>side==='right'?x>=a:x>a;
-  const V=RA-pointLoads.reduce((v,q)=>v+(active(q.a)?-q.P:0),0)-patchLoads.reduce((v,q)=>v+q.w*(pos(x-q.a)-pos(x-q.b)),0);
+  const V=RA-pointLoads.reduce((v,q)=>v+(active(q.a)?q.P:0),0)-patchLoads.reduce((v,q)=>v+q.w*(pos(x-q.a)-pos(x-q.b)),0);
   const M=-leftMoment+RA*x-pointLoads.reduce((v,q)=>v+q.P*pos(x-q.a),0)-patchLoads.reduce((v,q)=>v+q.w*(pos(x-q.a)**2-pos(x-q.b)**2)/2,0)+moments.reduce((v,q)=>v+(active(q.a)?q.M:0),0);
   return {x,V,M};
  };
