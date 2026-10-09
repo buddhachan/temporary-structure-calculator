@@ -1,0 +1,8 @@
+{
+  "name": "temporary-structure-calculator",
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test beam.test.mjs"
+  }
+}
