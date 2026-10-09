@@ -10,12 +10,12 @@ export function solveAdvancedBeam({L,pointLoads=[],patchLoads=[],moments=[],E=20
  const totalP=pointLoads.reduce((s,q)=>s+q.P,0)+patchLoads.reduce((s,q)=>s+q.w*(q.b-q.a),0);
  const RB=(pointLoads.reduce((s,q)=>s+q.P*q.a,0)+patchLoads.reduce((s,q)=>s+q.w*(q.b-q.a)*(q.a+q.b)/2,0)+moments.reduce((s,q)=>s+q.M,0))/L;
  const RA=totalP-RB,EI=E*I/1e9;
- function bending(x){return RA*x-pointLoads.reduce((s,q)=>s+q.P*positive(x-q.a),0)-patchLoads.reduce((s,q)=>s+q.w*(positive(x-q.a)**2-positive(x-q.b)**2)/2,0)+moments.reduce((s,q)=>s+q.M*H(x-q.a),0)}
+ function bending(x,side='right'){return RA*x-pointLoads.reduce((s,q)=>s+q.P*positive(x-q.a),0)-patchLoads.reduce((s,q)=>s+q.w*(positive(x-q.a)**2-positive(x-q.b)**2)/2,0)+moments.reduce((s,q)=>s+q.M*(side==='right'?x>=q.a:x>q.a),0)}
  function shear(x,side='right'){return RA-pointLoads.reduce((s,q)=>s+q.P*(side==='right'?x>=q.a:x>q.a),0)-patchLoads.reduce((s,q)=>s+q.w*(positive(x-q.a)-positive(x-q.b)),0)}
  function primitive(x){return RA*x**3/6-pointLoads.reduce((s,q)=>s+q.P*positive(x-q.a)**3/6,0)-patchLoads.reduce((s,q)=>s+q.w*(positive(x-q.a)**4-positive(x-q.b)**4)/24,0)+moments.reduce((s,q)=>s+q.M*positive(x-q.a)**2/2,0)}
  function slopePrimitive(x){return RA*x*x/2-pointLoads.reduce((s,q)=>s+q.P*positive(x-q.a)**2/2,0)-patchLoads.reduce((s,q)=>s+q.w*(positive(x-q.a)**3-positive(x-q.b)**3)/6,0)+moments.reduce((s,q)=>s+q.M*positive(x-q.a),0)}
  const C=primitive(L)/L;
- const at=(x,side='right')=>({x,V:shear(x,side),M:bending(x),y:1000*(C*x-primitive(x))/EI,theta:(C-slopePrimitive(x))/EI});
+ const at=(x,side='right')=>({x,V:shear(x,side),M:bending(x,side),y:1000*(C*x-primitive(x))/EI,theta:(C-slopePrimitive(x))/EI});
  const xs=new Set([0,L,...pointLoads.map(q=>q.a),...patchLoads.flatMap(q=>[q.a,q.b]),...moments.map(q=>q.a)]);
  for(let i=0;i<=steps;i++)xs.add(L*i/steps);
  const points=[...xs].sort((a,b)=>a-b).map(x=>at(x));
