@@ -3,6 +3,6 @@
   "version": "0.2.0",
   "type": "module",
   "scripts": {
-    "test": "node --test beam.test.mjs"
+    "test": "node --test beam.test.mjs beam-advanced.test.mjs"
   }
 }
